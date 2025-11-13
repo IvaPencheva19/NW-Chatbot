@@ -13,10 +13,10 @@
     "wait_for_user": {
       "id": "wait_for_user",
       "type": "wait_for_response",
-      "next": "detect_user_intent"
+      "next": "detect_intent_main"
     },
-    "detect_user_intent": {
-      "id": "detect_user_intent",
+    "detect_intent_main": {
+      "id": "detect_intent_main",
       "type": "detect_intent",
       "intents": [
         {
@@ -52,26 +52,58 @@
     "weather_info": {
       "id": "weather_info",
       "type": "write_message",
-      "message": "Sure! Please tell me which city you'd like the weather for.",
-      "next": "wait_for_user"
+      "message": "The weather in Varna is cold and rainy. ",
+      "next": "ask_more"
     },
     "travel_offer_info": {
       "id": "travel_offer_info",
       "type": "write_message",
-      "message": "Great! I can show you some amazing travel deals. Do you have a preferred destination?",
-      "next": "wait_for_user"
+      "message": "The best offer is now for Paris. - https://www.booking.com/city/fr/paris.html",
+      "next": "ask_more"
     },
     "restaurant_info": {
       "id": "restaurant_info",
       "type": "write_message",
-      "message": "I know some great places! Which cuisine are you in the mood for?",
-      "next": "wait_for_user"
+      "message": "I recoomend you to eat in restaurant Happy.",
+      "next": "ask_more"
+    },
+    "ask_more": {
+      "id": "ask_more",
+      "type": "write_message",
+      "message": "Do you need anything else?",
+      "next": "wait_for_yesno"
+    },
+    "wait_for_yesno": {
+      "id": "wait_for_yesno",
+      "type": "wait_for_response",
+      "next": "detect_intent_yesno"
+    },
+    "detect_intent_yesno": {
+      "id": "detect_intent_yesno",
+      "type": "detect_intent",
+      "intents": [
+        { "name": "yes", "examples": ["Yes", "Sure"], "next": "wait_for_user" },
+        { "name": "no", "examples": ["No", "Thanks"], "next": "goodbye" }
+      ],
+      "fallback_next": "unknown_intent"
+    },
+    "goodbye": {
+      "id": "goodbye",
+      "type": "write_message",
+      "message": "Thanks, bye!",
+      "next": "end"
     },
     "unknown_intent": {
       "id": "unknown_intent",
       "type": "write_message",
       "message": "Sorry, I didn’t quite get that. Could you rephrase?",
       "next": "wait_for_user"
+    },
+    "end": {
+      "id": "end",
+      "type": "end"
     }
   }
 }
+
+

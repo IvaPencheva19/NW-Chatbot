@@ -1,4 +1,4 @@
-export type BlockType = 'write_message' | 'wait_for_response' | 'detect_intent';
+export type BlockType = 'write_message' | 'wait_for_response' | 'detect_intent' | 'end';
 
 export interface ChatbotIntent {
     name: string;
@@ -17,9 +17,15 @@ export interface WriteMessageBlock extends BaseBlock {
     message: string;
 }
 
+export interface EndBlock extends BaseBlock {
+    type: 'end';
+    message: string;
+}
+
 export interface WaitForResponseBlock extends BaseBlock {
     type: 'wait_for_response';
 }
+
 
 export interface DetectIntentBlock extends BaseBlock {
     type: 'detect_intent';
@@ -30,7 +36,8 @@ export interface DetectIntentBlock extends BaseBlock {
 export type ChatbotBlock =
     | WriteMessageBlock
     | WaitForResponseBlock
-    | DetectIntentBlock;
+    | DetectIntentBlock
+    | AskForNextQuestionBlock;
 
 export interface ChatbotConfig {
     id: string;
