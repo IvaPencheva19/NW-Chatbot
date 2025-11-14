@@ -37,7 +37,7 @@ export type ChatbotBlock =
     | WriteMessageBlock
     | WaitForResponseBlock
     | DetectIntentBlock
-    | AskForNextQuestionBlock;
+    | EndBlock;
 
 export interface ChatbotConfig {
     id: string;

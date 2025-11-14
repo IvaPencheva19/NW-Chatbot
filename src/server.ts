@@ -1,6 +1,9 @@
 import restify from 'restify';
-import { getChatbotConfig, uploadChatbotConfig } from './controllers/chatbotConfigController';
 import { initializeWebSocketServer } from './controllers/websocketController';
+import { historyRoutes } from './routes/historyRoutes';
+import { chatbotConfigRoutes } from './routes/chatbotConfigRoutes';
+import mongoose from 'mongoose';
+
 
 const server = restify.createServer({
     name: 'ChatbotBackend',
@@ -10,8 +13,9 @@ const server = restify.createServer({
 server.use(restify.plugins.bodyParser());
 server.use(restify.plugins.queryParser());
 
-server.get('/config', getChatbotConfig);
-server.post('/config', uploadChatbotConfig);
+historyRoutes(server);
+chatbotConfigRoutes(server);
+
 
 const PORT = process.env.PORT || 4000;
 const httpServer = server.listen(PORT, () => {
@@ -19,3 +23,9 @@ const httpServer = server.listen(PORT, () => {
 });
 
 initializeWebSocketServer(httpServer);
+
+
+mongoose
+    .connect(process.env.MONGO_URL || 'mongodb://localhost:27017/chatbot')
+    .then(() => console.log("MongoDB connected"))
+    .catch(err => console.error("MongoDB error:", err));

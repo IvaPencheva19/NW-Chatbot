@@ -1,4 +1,3 @@
-// src/services/openAIService.ts
 import OpenAI from "openai";
 import dotenv from "dotenv";
 import { ChatbotIntent } from "../types/chatbotTypes";

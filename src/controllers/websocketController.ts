@@ -2,23 +2,17 @@ import WebSocket, { WebSocketServer } from 'ws';
 import { ChatbotService } from '../services/chatbotService';
 import { readConfigFile } from '../utils/fileManager';
 
-interface ClientSession {
-    id: string;
-    socket: WebSocket;
-    chatbot: ChatbotService;
-    state: {
-        currentBlockId: string;
-        history: Array<{ sender: 'user' | 'bot'; message: string }>;
-    };
-}
+import { HistoryService } from '../services/historyService';
 
-const clients: Record<string, ClientSession> = {};
+const history = new HistoryService();
+const clients: Record<string, any> = {};
+
 
 export const initializeWebSocketServer = (server: any) => {
     const wss = new WebSocketServer({ server });
     console.log('WebSocket server initialized');
 
-    wss.on('connection', (socket: WebSocket) => {
+    wss.on('connection', async (socket: WebSocket) => {
         const sessionId = `session_${Date.now()}_${Math.random()
             .toString(36)
             .slice(2)}`;
@@ -27,6 +21,8 @@ export const initializeWebSocketServer = (server: any) => {
         const chatbot = new ChatbotService();
 
         const startBlockId = chatbotConfig?.start_block || 'welcome';
+
+        await history.startSession(sessionId);
 
         clients[sessionId] = {
             id: sessionId,
@@ -52,6 +48,13 @@ export const initializeWebSocketServer = (server: any) => {
                 })
             );
 
+            await history.addMessage(
+                sessionId,
+                'bot',
+                startBlock.message,
+                startBlock.id
+            );
+
             if (startBlock.next) {
                 clients[sessionId].state.currentBlockId = startBlock.next;
             }
@@ -60,6 +63,13 @@ export const initializeWebSocketServer = (server: any) => {
         socket.on('message', async (data: WebSocket.RawData) => {
             const userMessage = data.toString();
             const session = clients[sessionId];
+
+            await history.addMessage(
+                sessionId,
+                'user',
+                userMessage,
+                session.state.currentBlockId
+            );
 
             try {
                 const result = await session.chatbot.processMessage(
@@ -76,12 +86,24 @@ export const initializeWebSocketServer = (server: any) => {
                             message: result.botMessage
                         })
                     );
+                    await history.addMessage(
+                        sessionId,
+                        'bot',
+                        result.botMessage,
+                        result.nextBlockId
+                    );
                 } else {
                     socket.send(
                         JSON.stringify({
                             type: 'info',
                             message: 'Waiting for your response...'
                         })
+                    );
+                    await history.addMessage(
+                        sessionId,
+                        'bot',
+                        result.botMessage,
+                        result.nextBlockId
                     );
                 }
             } catch (err) {
@@ -91,6 +113,12 @@ export const initializeWebSocketServer = (server: any) => {
                         type: 'error',
                         message: 'Something went wrong while processing your message.'
                     })
+                );
+                await history.addMessage(
+                    sessionId,
+                    'bot',
+                    'Something went wrong while processing your message.',
+                    session.state.currentBlockId
                 );
             }
         });
