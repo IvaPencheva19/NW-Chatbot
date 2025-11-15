@@ -1,6 +1,5 @@
 import WebSocket, { WebSocketServer } from 'ws';
 import { ChatbotService } from '../services/chatbotService';
-import { readConfigFile } from '../utils/fileManager';
 
 import { HistoryService } from '../services/historyService';
 
@@ -17,10 +16,13 @@ export const initializeWebSocketServer = (server: any) => {
             .toString(36)
             .slice(2)}`;
 
-        const chatbotConfig = readConfigFile();
         const chatbot = new ChatbotService();
 
-        const startBlockId = chatbotConfig?.start_block || 'welcome';
+        await chatbot.init();
+
+
+        const startBlockId = chatbot['config'].start_block || 'welcome';
+
 
         await history.startSession(sessionId);
 
@@ -37,7 +39,7 @@ export const initializeWebSocketServer = (server: any) => {
         console.log(`Client connected: ${sessionId}`);
 
 
-        const startBlock = chatbotConfig.blocks[startBlockId];
+        const startBlock = chatbot['config'].blocks.welcome;
         console.log("Start block", startBlock)
 
         if (startBlock && startBlock.type === 'write_message') {

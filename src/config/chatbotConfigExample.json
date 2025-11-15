@@ -1,7 +1,7 @@
 {
   "id": "travel_assistant_v1",
   "name": "Travel Assistant Chatbot",
-  "description": "A chatbot that provides travel offers, weather info, and restaurant recommendations.",
+  "description": "A chatbot that provides travel offers, weather info, and restaurant recommendations. ai",
   "start_block": "welcome",
   "blocks": {
     "welcome": {

@@ -5,7 +5,7 @@ import {
     WaitForResponseBlock,
     DetectIntentBlock,
 } from '../types/chatbotTypes';
-import { readConfigFile } from '../utils/fileManager';
+import { ChatbotConfigService } from './chatBotConfigService';
 import { detectIntent } from './openAIService';
 
 export interface ConversationState {
@@ -14,13 +14,17 @@ export interface ConversationState {
 }
 
 export class ChatbotService {
-    private config: ChatbotConfig;
+    private config: any;
+    private configService = new ChatbotConfigService();
 
-    constructor() {
-        const cfg = readConfigFile();
-        if (!cfg) throw new Error('Chatbot config not found');
-        this.config = cfg;
+    constructor(private configId: string = 'travel_assistant_v1') { }
+
+    // Load config explicitly before usage
+    async init() {
+        this.config = await this.configService.getConfig(this.configId);
+        if (!this.config) throw new Error('Chatbot config not found');
     }
+
 
     private getBlock(blockId: string): ChatbotBlock {
         const block = this.config.blocks[blockId];

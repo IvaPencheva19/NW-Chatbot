@@ -1,50 +1,27 @@
-import { Request, Response, Next } from 'restify';
-import { readConfigFile, writeConfigFile } from '../utils/fileManager';
+import { Request, Response } from 'restify';
+import { ChatbotConfigService } from '../services/chatBotConfigService';
 
-export class ChatbotConfigController {
+const service = new ChatbotConfigService();
 
-    getChatbotConfig(req: Request, res: Response, next: Next) {
-        try {
-            const config = readConfigFile();
-
-            if (!config) {
-                res.send(500, { error: 'Failed to load chatbot configuration.' });
-                return next();
-            }
-
-            res.send(200, config);
-            return next();
-        } catch (err) {
-            console.error("Error loading chatbot config:", err);
-            res.send(500, { error: 'Server error while loading chatbot configuration.' });
-            return next();
-        }
+export const getChatbotConfig = async (req: Request, res: Response) => {
+    try {
+        const config = await service.getConfig('travel_assistant_v1');
+        if (!config) return res.send(404, { error: 'Config not found' });
+        res.send(200, config);
+    } catch (err) {
+        console.error(err);
+        res.send(500, { error: 'Failed to load config' });
     }
+};
 
-    uploadChatbotConfig(req: Request, res: Response, next: Next) {
-        try {
-            const newConfig = req.body;
-
-            if (!newConfig || typeof newConfig !== 'object') {
-                res.send(400, { error: 'Invalid or missing JSON body.' });
-                return next();
-            }
-
-            const writeSuccess = writeConfigFile(newConfig);
-
-            if (!writeSuccess) {
-                res.send(500, { error: 'Failed to save chatbot configuration.' });
-                return next();
-            }
-
-            res.send(200, { message: 'Chatbot configuration saved successfully.' });
-            return next();
-        } catch (err) {
-            console.error("Error saving chatbot config:", err);
-            res.send(500, { error: 'Server error while saving chatbot configuration.' });
-            return next();
-        }
+export const uploadChatbotConfig = async (req: Request, res: Response) => {
+    try {
+        const body = req.body;
+        if (!body || typeof body !== 'object') return res.send(400, { error: 'Invalid body' });
+        await service.updateConfig('travel_assistant_v1', body);
+        res.send(200, { message: 'Config saved' });
+    } catch (err) {
+        console.error(err);
+        res.send(500, { error: 'Failed to save config' });
     }
-}
-
-export const chatbotConfigController = new ChatbotConfigController();
+};
