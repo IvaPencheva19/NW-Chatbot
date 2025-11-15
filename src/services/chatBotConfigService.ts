@@ -1,16 +1,13 @@
-// src/services/chatbotConfig.service.ts
-import { ChatbotConfigModel } from '../types/chatbotConfigModel';
+import { ChatbotConfigModel } from '../models/chatbotConfigModel';
 
-export class ChatbotConfigService {
-    async getConfig(id: string) {
-        return await ChatbotConfigModel.findOne({ id }).lean();
-    }
+export const getConfig = async (id: string) => {
+    return await ChatbotConfigModel.findOne({ id }).lean();
+};
 
-    async updateConfig(id: string, newConfig: any) {
-        return await ChatbotConfigModel.findOneAndUpdate(
-            { id },
-            newConfig,
-            { upsert: true, new: true }
-        );
-    }
-}
+export const updateConfig = async (id: string, newConfig: any) => {
+    return await ChatbotConfigModel.findOneAndUpdate(
+        { id },
+        newConfig,
+        { upsert: true, new: true }
+    );
+};

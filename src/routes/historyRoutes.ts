@@ -1,5 +1,5 @@
 import { Server } from 'restify';
-import { historyController } from '../controllers/historyController';
+import * as historyController from '../controllers/historyController';
 
 export const historyRoutes = (server: Server) => {
 

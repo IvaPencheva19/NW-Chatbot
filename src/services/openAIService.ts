@@ -1,6 +1,6 @@
 import OpenAI from "openai";
 import dotenv from "dotenv";
-import { ChatbotIntent } from "../types/chatbotTypes";
+import { ChatbotIntent } from "../models/chatbotTypes";
 
 dotenv.config();
 
@@ -15,7 +15,6 @@ export const detectIntent = async (
     try {
         const intentNames = intents.map((i) => i.name);
 
-        console.log("Intent names", intentNames)
         const intentExamples = intents
             .map((i) => `${i.name}: ${i.examples.join(", ")}`)
             .join("\n");
@@ -34,7 +33,6 @@ export const detectIntent = async (
             temperature: 0,
         });
 
-        console.log(response.choices[0]?.message);
 
         const reply = response.choices[0]?.message?.content?.trim().toLowerCase();
 
@@ -48,13 +46,3 @@ export const detectIntent = async (
         return null;
     }
 };
-// export const detectIntent = async (userMessage: string,
-//     intents: ChatbotIntent[]) => {
-//     console.log("HEREEE")
-//     const lower = userMessage.toLowerCase();
-//     console.log(lower)
-//     if (lower.includes('weather')) return intents.find(i => i.name === 'weather')!;
-//     if (lower.includes('offer')) return intents.find(i => i.name === 'travel_offers')!;
-//     if (lower.includes('restaurant')) return intents.find(i => i.name === 'restaurant_recommendations')!;
-//     return null;
-// };

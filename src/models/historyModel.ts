@@ -1,28 +1,28 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
-export interface IMessage {
+export interface Message {
     sender: 'user' | 'bot';
     message: string;
     blockId: string;
     timestamp: Date;
 }
 
-export interface IConversation extends Document {
+export interface Conversation extends Document {
     sessionId: string;
-    messages: IMessage[];
+    messages: Message[];
 }
 
-const MessageSchema = new Schema<IMessage>({
+const MessageSchema = new Schema<Message>({
     sender: { type: String, enum: ['user', 'bot'], required: true },
     message: { type: String, required: true },
     blockId: { type: String, required: true },
     timestamp: { type: Date, default: Date.now }
 });
 
-const ConversationSchema = new Schema<IConversation>({
+const ConversationSchema = new Schema<Conversation>({
     sessionId: { type: String, required: true, unique: true },
     messages: { type: [MessageSchema], default: [] }
 });
 
 export const ConversationModel =
-    mongoose.model<IConversation>('Conversation', ConversationSchema);
+    mongoose.model<Conversation>('Conversation', ConversationSchema);
