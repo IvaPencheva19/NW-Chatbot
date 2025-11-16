@@ -22,69 +22,8 @@ This app use MongoDB to store the configation for the chatbot and the history of
 
 HTTP server and WebSocket will be both running on port 4000.
 
-REST endpoints for getting/rewriting the chatbot config and endpoints for history can be tested with Postman. WebSocket comunnication (chat with chatbot) can be tested in the browser. Example:
+REST endpoints for getting/rewriting the chatbot config and endpoints for history can be tested with Postman.
 
-### WebSocket Example
-
-1. Open the browser console and paste:
-
-```
-const ws = new WebSocket("ws://localhost:4000");
-ws.onmessage = (e) => console.log("Bot says:", e.data);
-```
-
-Bot will send initial message:
-
-```
-Bot says: {"type":"bot_message","message":"Hi! I'm your Travel Assistant. How can I help you today?"}
-```
-
-2. Ask chat bot something - send message via websocket:
-
-```
-ws.send("Can you give me travel offers?")
-```
-
-3. Bot will answer something like this:
-
-```
-Bot says: {"type":"bot_message","message":"The best offer is now for Paris. - https://www.booking.com/city/fr/paris.html
- Do you need anything else?"}
-```
-
-4. You can send:
-
-```
-ws.send("yes")
-```
-
-Bot will respond:
-
-```
-Bot says: {"type":"info","message":"Waiting for your response..."}
-```
-
-Then you can send your next message:
-
-```
-ws.send("Where to eat today")
-```
-
-OR you can send:
-
-```
-ws.send("no")
-```
-
-Bot says:
-
-```
-Bot says: {"type":"bot_message","message":"Thanks, bye!"}
-```
-
-This will end the conversation.
-
----
 
 ## REST endpoints for configiuring chatbot (testing on local: http://localhost:4000):
 
@@ -222,4 +161,73 @@ HTTP status 200 OK
 // 3 more messages here
 ]
 }
+
+
+
+## WebSocket comunnication (chat with chatbot)
+
+
+### WebSocket Example in browser console
+
+1. Open the browser console and paste:
+
+```
+const ws = new WebSocket("ws://localhost:4000");
+ws.onmessage = (e) => console.log("Bot says:", e.data);
+```
+
+Bot will send initial message:
+
+```
+Bot says: {"type":"bot_message","message":"Hi! I'm your Travel Assistant. How can I help you today?"}
+```
+
+2. Ask chat bot something - send message via websocket:
+
+```
+ws.send("Can you give me travel offers?")
+```
+
+3. Bot will answer something like this:
+
+```
+Bot says: {"type":"bot_message","message":"The best offer is now for Paris. - https://www.booking.com/city/fr/paris.html
+ Do you need anything else?"}
+```
+
+4. You can send:
+
+```
+ws.send("yes")
+```
+
+Bot will respond:
+
+```
+Bot says: {"type":"info","message":"Waiting for your response..."}
+```
+
+Then you can send your next message:
+
+```
+ws.send("Where to eat today")
+```
+
+OR you can send:
+
+```
+ws.send("no")
+```
+
+Bot says:
+
+```
+Bot says: {"type":"bot_message","message":"Thanks, bye!"}
+```
+
+This will end the conversation.
+
+---
+
+
 ```
