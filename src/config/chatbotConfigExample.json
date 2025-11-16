@@ -1,0 +1,121 @@
+{
+  "id": "travel_assistant_v1",
+  "name": "Travel Assistant Chatbot",
+  "description": "A chatbot that provides travel offers, weather info, and restaurant recommendations. ai",
+  "start_block": "welcome",
+  "blocks": {
+    "welcome": {
+      "id": "welcome",
+      "type": "write_message",
+      "message": "Hi! I'm your Travel Assistant. How can I help you today?",
+      "next": "wait_for_user"
+    },
+    "wait_for_user": {
+      "id": "wait_for_user",
+      "type": "wait_for_response",
+      "next": "detect_intent_main"
+    },
+    "detect_intent_main": {
+      "id": "detect_intent_main",
+      "type": "detect_intent",
+      "intents": [
+        {
+          "name": "weather",
+          "examples": [
+            "What's the weather?",
+            "Tell me the weather forecast",
+            "Give me the weather"
+          ],
+          "next": "weather_info"
+        },
+        {
+          "name": "travel_offers",
+          "examples": [
+            "Show me travel offers",
+            "Any flight discounts?",
+            "Vacation deals"
+          ],
+          "next": "travel_offer_info"
+        },
+        {
+          "name": "restaurant_recommendations",
+          "examples": [
+            "Recommend a restaurant",
+            "Where should I eat?",
+            "Find restaurants nearby"
+          ],
+          "next": "restaurant_info"
+        }
+      ],
+      "fallback_next": "unknown_intent"
+    },
+    "weather_info": {
+      "id": "weather_info",
+      "type": "write_message",
+      "message": "The weather in Varna is cold and rainy. ",
+      "next": "ask_more"
+    },
+    "travel_offer_info": {
+      "id": "travel_offer_info",
+      "type": "write_message",
+      "message": "The best offer is now for Paris. - https://www.booking.com/city/fr/paris.html",
+      "next": "ask_more"
+    },
+    "restaurant_info": {
+      "id": "restaurant_info",
+      "type": "write_message",
+      "message": "I recoomend you to eat in restaurant Happy.",
+      "next": "ask_more"
+    },
+    "ask_more": {
+      "id": "ask_more",
+      "type": "write_message",
+      "message": "Do you need anything else?",
+      "next": "wait_for_yesno"
+    },
+    "wait_for_yesno": {
+      "id": "wait_for_yesno",
+      "type": "wait_for_response",
+      "next": "detect_intent_yesno"
+    },
+    "detect_intent_yesno": {
+      "id": "detect_intent_yesno",
+      "type": "detect_intent",
+      "intents": [
+        {
+          "name": "yes",
+          "examples": [
+            "Yes",
+            "Sure"
+          ],
+          "next": "wait_for_user"
+        },
+        {
+          "name": "no",
+          "examples": [
+            "No",
+            "Thanks"
+          ],
+          "next": "goodbye"
+        }
+      ],
+      "fallback_next": "unknown_intent"
+    },
+    "goodbye": {
+      "id": "goodbye",
+      "type": "write_message",
+      "message": "Thanks, bye!",
+      "next": "end"
+    },
+    "unknown_intent": {
+      "id": "unknown_intent",
+      "type": "write_message",
+      "message": "Sorry, I didn’t quite get that. Could you rephrase?",
+      "next": "wait_for_user"
+    },
+    "end": {
+      "id": "end",
+      "type": "end"
+    }
+  }
+}
