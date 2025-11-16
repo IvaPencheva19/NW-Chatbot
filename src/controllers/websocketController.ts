@@ -21,7 +21,19 @@ export const initializeWebSocketServer = (server: any) => {
     wss.on('connection', async (socket: WebSocket) => {
         const sessionId = generateSessionId();
         const chatbot = new ChatbotService();
-        await chatbot.init();
+        try {
+            await chatbot.init();
+        } catch (error) {
+            console.error("Failed to initialize chatbot:", error);
+
+            socket.send(JSON.stringify({
+                type: "error",
+                message: "Chatbot configuration not found."
+            }));
+
+            socket.close();
+            return;
+        }
 
         const startBlockId = chatbot['config'].start_block || 'welcome';
         await historyService.startSession(sessionId);
@@ -42,7 +54,16 @@ export const initializeWebSocketServer = (server: any) => {
         await sendStartBlockMessage(client);
 
         socket.on('message', async (data: WebSocket.RawData) => {
-            await handleUserMessage(client, data.toString());
+
+            const parsed = JSON.parse(data.toString());
+
+            console.log("parsed ", parsed.type)
+
+            if (parsed.type === 'reset') {
+                return resetConversation(client);
+            }
+
+            await handleUserMessage(client, parsed.message);
         });
 
         socket.on('close', () => {
@@ -105,4 +126,16 @@ const handleUserMessage = async (client: Client, userMessage: string) => {
         socket.send(JSON.stringify({ type: 'error', message: errorMessage }));
         await historyService.addMessage(sessionId, 'bot', errorMessage, state.currentBlockId);
     }
+};
+
+
+const resetConversation = async (client: Client) => {
+    const { chatbot, id: sessionId } = client;
+
+    client.state = chatbot.createInitialState();
+
+    const startBlock = chatbot["config"].blocks[client.state.currentBlockId];
+
+    await historyService.startSession(sessionId);
+    await historyService.addMessage(sessionId, 'bot', startBlock.message, client.state.currentBlockId);
 };

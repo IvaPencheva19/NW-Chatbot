@@ -7,7 +7,6 @@ jest.mock('ws');
 jest.mock('../../services/chatbotService');
 jest.mock('../../services/historyService');
 
-
 describe('WebSocket Server', () => {
     let mockServer: any;
     let mockSocket: any;
@@ -33,6 +32,10 @@ describe('WebSocket Server', () => {
                 nextBlockId: 'next_block',
                 botMessage: 'Hello!'
             }),
+            createInitialState: jest.fn().mockReturnValue({
+                currentBlockId: 'welcome',
+                history: []
+            }),
             config: {
                 start_block: 'welcome',
                 blocks: {
@@ -40,13 +43,12 @@ describe('WebSocket Server', () => {
                 }
             }
         };
+
         (ChatbotService as jest.Mock).mockImplementation(() => mockChatbotInstance);
 
         (WebSocketServer as unknown as jest.Mock).mockImplementation(({ server }) => ({
             on: jest.fn((event, cb) => {
-                if (event === 'connection') {
-                    connectionCallback = cb;
-                }
+                if (event === 'connection') connectionCallback = cb;
             })
         }));
 
@@ -56,9 +58,7 @@ describe('WebSocket Server', () => {
 
     it('should initialize WebSocket server and handle client connection', async () => {
         await initializeWebSocketServer(mockServer);
-
         await connectionCallback(mockSocket);
-
         await new Promise(process.nextTick);
 
         expect(mockChatbotInstance.init).toHaveBeenCalled();
@@ -67,7 +67,7 @@ describe('WebSocket Server', () => {
             JSON.stringify({ type: 'bot_message', message: 'Welcome!' })
         );
 
-        await mockSocket._messageCb('User message');
+        await mockSocket._messageCb(JSON.stringify({ type: 'user_message', message: 'Hello!' }));
         expect(mockChatbotInstance.processMessage).toHaveBeenCalled();
         expect(mockSocket.send).toHaveBeenCalledWith(
             JSON.stringify({ type: 'bot_message', message: 'Hello!' })
@@ -79,11 +79,10 @@ describe('WebSocket Server', () => {
     it('should handle chatbot processing errors gracefully', async () => {
         mockChatbotInstance.processMessage.mockRejectedValueOnce(new Error('Test error'));
         await initializeWebSocketServer(mockServer);
-
         await connectionCallback(mockSocket);
         await new Promise(process.nextTick);
 
-        await mockSocket._messageCb('Error message');
+        await mockSocket._messageCb(JSON.stringify({ type: 'user_message', message: 'Error message' }));
 
         expect(mockSocket.send).toHaveBeenCalledWith(
             JSON.stringify({
@@ -97,6 +96,28 @@ describe('WebSocket Server', () => {
             'bot',
             'Something went wrong while processing your message.',
             expect.any(String)
+        );
+    });
+
+    it('should reset conversation when receiving reset message', async () => {
+        await initializeWebSocketServer(mockServer);
+        await connectionCallback(mockSocket);
+        await new Promise(process.nextTick);
+
+        await mockSocket._messageCb(JSON.stringify({ type: 'reset' }));
+
+        expect(mockChatbotInstance.createInitialState).toHaveBeenCalled();
+
+        expect(mockSocket.send).toHaveBeenCalledWith(
+            JSON.stringify({ type: 'bot_message', message: 'Welcome!' })
+        );
+
+        expect(historyService.startSession).toHaveBeenCalledTimes(2);
+        expect(historyService.addMessage).toHaveBeenCalledWith(
+            expect.any(String),
+            'bot',
+            'Welcome!',
+            'welcome'
         );
     });
 });

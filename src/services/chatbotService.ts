@@ -169,4 +169,13 @@ export class ChatbotService {
 
         return { botMessage: combinedMessage, nextBlock: finalNextBlock };
     }
+
+
+    public createInitialState() {
+        return {
+            currentBlockId: this.config.start_block || 'welcome',
+            history: []
+        };
+    }
+
 }

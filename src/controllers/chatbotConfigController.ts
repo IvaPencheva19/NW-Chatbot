@@ -2,14 +2,15 @@ import { Request, Response } from 'restify';
 import * as chatBotConfigService from '../services/chatBotConfigService';
 
 
+
 export const getChatbotConfig = async (req: Request, res: Response) => {
     try {
         const config = await chatBotConfigService.getConfig('travel_assistant_v1');
-        if (!config) return res.send(404, { error: 'Config not found' });
+        if (!config) return res.send(404, { error: 'Chatbot config not found' });
         res.send(200, config);
     } catch (err) {
         console.error(err);
-        res.send(500, { error: 'Failed to load config' });
+        res.send(500, { error: 'Failed to load chatbot config' });
     }
 };
 
@@ -18,9 +19,9 @@ export const uploadChatbotConfig = async (req: Request, res: Response) => {
         const body = req.body;
         if (!body || typeof body !== 'object') return res.send(400, { error: 'Invalid body' });
         await chatBotConfigService.updateConfig('travel_assistant_v1', body);
-        res.send(200, { message: 'Config saved' });
+        res.send(200, { message: 'Chatbot config saved' });
     } catch (err) {
         console.error(err);
-        res.send(500, { error: 'Failed to save config' });
+        res.send(500, { error: 'Failed to save chatbot config' });
     }
 };
