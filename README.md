@@ -181,7 +181,10 @@ Bot says: {"type":"bot_message","message":"Hi! I'm your Travel Assistant. How ca
 2. Ask chat bot something - send message via websocket:
 
 ```
-ws.send("Can you give me travel offers?")
+ws.send(JSON.stringify({
+    type: 'user_message', 
+    message: 'Can you give me travel offer?'
+}))
 ```
 
 3. Bot will answer something like this:
@@ -194,7 +197,10 @@ Bot says: {"type":"bot_message","message":"The best offer is now for Paris. - ht
 4. You can send:
 
 ```
-ws.send("yes")
+ws.send(JSON.stringify({
+    type: 'user_message', 
+    message: 'yes'
+}))
 ```
 
 Bot will respond:
@@ -206,13 +212,19 @@ Bot says: {"type":"info","message":"Waiting for your response..."}
 Then you can send your next message:
 
 ```
-ws.send("Where to eat today")
+ws.send(JSON.stringify({
+    type: 'user_message', 
+    message: 'Where to eat today?'
+}))
 ```
 
-OR you can send:
+OR you can send this to end the conversation.
 
 ```
-ws.send("no")
+ws.send(JSON.stringify({
+    type: 'user_message',
+    message: 'no'
+}))
 ```
 
 Bot says:
@@ -221,7 +233,13 @@ Bot says:
 Bot says: {"type":"bot_message","message":"Thanks, bye!"}
 ```
 
-This will end the conversation.
+You can reset the conversation and start asking again with sending:
+
+```
+ws.send(JSON.stringify({
+    type: 'reset'
+}))
+```
 
 ---
 
