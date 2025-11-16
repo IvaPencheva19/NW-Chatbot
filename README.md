@@ -22,9 +22,6 @@ This app use MongoDB to store the configation for the chatbot and the history of
 
 HTTP server and WebSocket will be both running on port 4000.
 
-REST endpoints for getting/rewriting the chatbot config and endpoints for history can be tested with Postman.
-
-
 ## REST endpoints for configiuring chatbot (testing on local: http://localhost:4000):
 
 ### 1. Get chatbot confiuration in JSON format
@@ -161,13 +158,12 @@ HTTP status 200 OK
 // 3 more messages here
 ]
 }
+```
+---
 
+## WebSocket comunnication (chat with chatbot) 
 
-
-## WebSocket comunnication (chat with chatbot)
-
-
-### WebSocket Example in browser console
+### WebSocket Example - test in browser console
 
 1. Open the browser console and paste:
 
@@ -230,4 +226,4 @@ This will end the conversation.
 ---
 
 
-```
+
