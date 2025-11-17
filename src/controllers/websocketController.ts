@@ -14,6 +14,7 @@ interface Client {
 
 const clients: Record<string, Client> = {};
 
+//Initialize WebSocket server
 export const initializeWebSocketServer = (server: any) => {
     const wss = new WebSocketServer({ server });
     console.log('WebSocket server initialized');
@@ -77,6 +78,8 @@ export const initializeWebSocketServer = (server: any) => {
 const generateSessionId = () =>
     `session_${Date.now()}_${Math.random().toString(36).slice(2)}`;
 
+
+//Send initial chatbot message
 const sendStartBlockMessage = async (client: Client) => {
     const startBlock = client.chatbot['config'].blocks.welcome;
 
@@ -101,6 +104,7 @@ const sendStartBlockMessage = async (client: Client) => {
     }
 };
 
+//Handle user message
 const handleUserMessage = async (client: Client, userMessage: string) => {
     const { id: sessionId, state, chatbot, socket } = client;
 
@@ -128,7 +132,7 @@ const handleUserMessage = async (client: Client, userMessage: string) => {
     }
 };
 
-
+//Reset conversation with chatbot
 const resetConversation = async (client: Client) => {
     const { chatbot, id: sessionId } = client;
 

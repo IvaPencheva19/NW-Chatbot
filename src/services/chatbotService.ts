@@ -24,7 +24,7 @@ export class ChatbotService {
         this.configId = configId;
     }
 
-
+    //Load chatbot configuration
     public async init(): Promise<void> {
         this.config = await chatBotConfigService.getConfig(this.configId);
         if (!this.config) {
@@ -64,7 +64,7 @@ export class ChatbotService {
         return { botMessage, nextBlockId: state.currentBlockId };
     }
 
-
+    //Execute the proper logic after detecting the current block
     private async executeBlockLogic(
         currentBlock: ChatbotBlock,
         state: ConversationState,
@@ -140,6 +140,7 @@ export class ChatbotService {
     }
 
 
+    //Chain messages
     private processMessageChain(
         initialBlock: WriteMessageBlock,
         state: ConversationState

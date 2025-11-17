@@ -8,6 +8,8 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
+
+/* OpenAI integration. Detect user intent. */
 export const detectIntent = async (
     userMessage: string,
     intents: ChatbotIntent[]
@@ -25,7 +27,7 @@ export const detectIntent = async (
         Possible intents: ${intentNames.join(", ")}`;
 
         const response = await openai.chat.completions.create({
-            model: "gpt-4o-mini",
+            model: "gpt-4o-mini",  //use better version for better results
             messages: [
                 { role: "system", content: "You are a precise intent detection AI." },
                 { role: "user", content: prompt },

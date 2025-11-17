@@ -108,7 +108,6 @@ describe('ChatbotService', () => {
     });
 
     test('write_message chains correctly across multiple blocks (step by step)', async () => {
-        // Setup test chain
         const chainConfig = JSON.parse(JSON.stringify(baseConfig));
         chainConfig.blocks.start_chain = {
             id: 'start_chain',
@@ -133,12 +132,10 @@ describe('ChatbotService', () => {
 
         state.currentBlockId = 'start_chain';
 
-        // Step 1: process start_chain
         const response1 = await chainedService.processMessage(state, '');
         expect(response1.botMessage).toBe('Hello');
         expect(state.currentBlockId).toBe('middle_chain');
 
-        // Step 2: process middle_chain
         const response2 = await chainedService.processMessage(state, '');
         expect(response2.botMessage).toBe('This is chained.');
         expect(state.currentBlockId).toBe('end_chain');

@@ -2,7 +2,7 @@ import { Request, Response } from 'restify';
 import * as chatBotConfigService from '../services/chatBotConfigService';
 
 
-
+//Fetch chatbot config
 export const getChatbotConfig = async (req: Request, res: Response) => {
     try {
         const config = await chatBotConfigService.getConfig('travel_assistant_v1');
@@ -14,6 +14,8 @@ export const getChatbotConfig = async (req: Request, res: Response) => {
     }
 };
 
+
+//Create new/update chatbot config
 export const uploadChatbotConfig = async (req: Request, res: Response) => {
     try {
         const body = req.body;

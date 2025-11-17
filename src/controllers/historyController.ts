@@ -1,8 +1,7 @@
 import { Request, Response, Next } from 'restify';
 import * as historyService from '../services/historyService';
 
-
-
+/* Get full history for a session */
 export const getSessionHistory = async (req: Request, res: Response, next: Next) => {
     try {
         const sessionId = req.params.sessionId;
@@ -22,6 +21,7 @@ export const getSessionHistory = async (req: Request, res: Response, next: Next)
     }
 }
 
+/*Get all conversations*/
 export const getAllSessions = async (req: Request, res: Response, next: Next) => {
     try {
         const sessions = await historyService.getAllSessions();
@@ -34,6 +34,8 @@ export const getAllSessions = async (req: Request, res: Response, next: Next) =>
     }
 }
 
+
+/* Get paginated conversation */
 export const getPaginated = async (req: Request, res: Response, next: Next) => {
     try {
         const sessionId = req.params.sessionId;
